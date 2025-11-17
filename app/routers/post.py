@@ -13,6 +13,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 @router.get("/")
 def get_posts(
     db: Session = Depends(get_db),
+    current_user: int = Depends(oauth2.get_current_user),
     limit: int = 10,
     skip: int = 0,
     search: Optional[str] = "",
@@ -30,7 +31,11 @@ def get_posts(
 
 
 @router.get("/{id}")
-def get_post(id: int, db: Session = Depends(get_db)) -> schemas.PostOut:
+def get_post(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: int = Depends(oauth2.get_current_user),
+) -> schemas.PostOut:
     post = (
         db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
         .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)

@@ -58,19 +58,19 @@ jobs:
       - name: image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Deploy to Server
-  #       uses: easingthemes/ssh-deploy@v2.1.5
-  #       env:
-  #         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         ARGS: "-avz --delete"
-  #         SOURCE: "docker-compose.yml"
-  #         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-  #         REMOTE_USER: ${{ secrets.REMOTE_USER }}
-  #         TARGET: ${{ secrets.REMOTE_TARGET }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to ubuntu server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          password: ${{ secrets.PROD_PASSWORD }}
+          port: ${{ secrets.SERVER_SSH_PORT }}
+          script: |
+            cd app/src
+            git pull
+            echo ${{ secrets.PROD_PASSWORD }} | sudo -S systemctl restart api
 

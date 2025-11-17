@@ -57,5 +57,5 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapi:latest
       - name: image digest
-        run: echo "Image digest: ${{ steps.docker_build.outputs.digest }}"
+        run: echo ${{ steps.docker_build.outputs.digest }}
 

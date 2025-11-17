@@ -59,6 +59,8 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   deploy:
+    environment:
+        name: testing
     needs: build
     runs-on: ubuntu-latest
     steps:
